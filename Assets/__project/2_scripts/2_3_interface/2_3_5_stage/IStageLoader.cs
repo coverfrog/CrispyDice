@@ -1,6 +1,7 @@
 ﻿using System;
+using Cysharp.Threading.Tasks;
 
 public interface IStageLoader
 {
-    void Load(ulong stageID, Action onLoaded);
+    UniTaskVoid Load(ulong stageID, Action<float> onProgress);
 }

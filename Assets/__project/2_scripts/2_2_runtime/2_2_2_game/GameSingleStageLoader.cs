@@ -9,24 +9,27 @@ using Debug = UnityEngine.Debug;
 public class GameSingleStageLoader : IStageLoader
 {
     private ulong m_stageID;
-    private Action m_onLoaded;
+    private Action<float> m_onProgress;
  
     private CancellationTokenSource m_ctsLoad;
     
-    public void Load(ulong stageID, Action onLoaded)
+    public UniTaskVoid Load(ulong stageID, Action<float> onProgress)
     {
-        m_onLoaded = onLoaded;
+        m_onProgress = onProgress;
         m_stageID = stageID;
         
         m_ctsLoad = new CancellationTokenSource();
-        
-        TaskLoad(m_ctsLoad.Token).Forget();
+
+        return TaskLoad(m_ctsLoad.Token);
     }
 
     private async UniTaskVoid TaskLoad(CancellationToken cancelToken)
     {
         const string k_adrTable = "cons_table/stage";
+        const float k_callTotal = 2;
 
+        int call = 0;
+        
         StageConsTable table;
         
         // --------------------------------------------------------------------------
@@ -58,6 +61,9 @@ public class GameSingleStageLoader : IStageLoader
         }
         
         Log("테이블 로딩 성공");
+        
+        call++;
+        m_onProgress?.Invoke(call / k_callTotal);
 
         // --------------------------------------------------------------------------
 
@@ -96,15 +102,12 @@ public class GameSingleStageLoader : IStageLoader
             throw;
         }
         
-        Log("유닛 소환 성공");
-                
-        // --------------------------------------------------------------------------
-        
         AddressableUtil.Unload(k_adrTable);
         
-        // --------------------------------------------------------------------------
+        Log("유닛 소환 성공");
         
-        m_onLoaded?.Invoke();
+        call++;
+        m_onProgress?.Invoke(call / k_callTotal);
     }
     
     [Conditional("UNITY_EDITOR")]

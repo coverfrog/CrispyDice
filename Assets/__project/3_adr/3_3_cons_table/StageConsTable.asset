@@ -13,4 +13,8 @@ MonoBehaviour:
   m_Name: StageConsTable
   m_EditorClassIdentifier: Assembly-CSharp::StageConsTable
   m_data:
-    m_entries: []
+    m_entries:
+    - Key: 1
+      Value:
+        m_id: 1
+        m_enemyID: 2

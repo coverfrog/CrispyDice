@@ -1,6 +1,7 @@
 ﻿using System;
+using Cysharp.Threading.Tasks;
 
 public interface IGameInstaller : IDisposable
 {
-    void Install(Action onInstalled);
+    UniTaskVoid Install(Action<float> onProgress);
 }
