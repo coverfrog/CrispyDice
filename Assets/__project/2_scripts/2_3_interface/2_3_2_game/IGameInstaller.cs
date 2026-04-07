@@ -3,5 +3,5 @@ using Cysharp.Threading.Tasks;
 
 public interface IGameInstaller : IDisposable
 {
-    UniTaskVoid Install(Action<float> onProgress);
+    UniTaskVoid Install(IProgress<float> onProgress, IProgress<bool> onComplete);
 }

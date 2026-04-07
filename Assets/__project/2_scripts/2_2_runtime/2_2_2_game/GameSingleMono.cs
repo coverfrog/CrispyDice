@@ -20,8 +20,7 @@ public class GameSingleMono : MonoBehaviour
         const float k_callInterval = 1.0f / k_callTotal;
 
         int call = 0;
-        int callTarget = 1;
-     
+
         // --------------------------------------------------------------------------
 
         const float uiUpdateDuration = 0.3f;
@@ -34,32 +33,40 @@ public class GameSingleMono : MonoBehaviour
         {
             loadingPanel.UpdateProgress(this, p, duration: uiUpdateDuration);
         });
-        
+
         // [ Task 1 ]--------------------------------------------------------------------------
+
+        bool isDone = false;
         
-        installer.Install(p =>
-        {
-            progress.Report(call * k_callInterval + p * k_callInterval);
-            
-            if (Mathf.Approximately(p, 1.0f)) 
+        installer.Install(
+            new Progress<float>(p =>
+            {
+                progress.Report(call * k_callInterval + p * k_callInterval);
+            }),
+            new Progress<bool>(b =>
+            {
                 call++;
-        });
+                isDone = true;
+            }));
         
-        await UniTask.WaitUntil(() => call == callTarget);
+        await UniTask.WaitUntil(() => isDone);
         
         // [ Task 2 ]--------------------------------------------------------------------------
 
-        callTarget++;
+        isDone = false;
         
-        loader.Load(1, p =>
-        {
-            progress.Report(call * k_callInterval + p * k_callInterval);
-            
-            if (Mathf.Approximately(p, 1.0f)) 
+        loader.Load(1, 
+            new Progress<float>(p =>
+            {
+                progress.Report(call * k_callInterval + p * k_callInterval);
+            }),
+            new Progress<bool>(b =>
+            {
                 call++;
-        });
+                isDone = true;
+            }));
         
-        await UniTask.WaitUntil(() => call == callTarget);
+        await UniTask.WaitUntil(() => isDone);
         
         // --------------------------------------------------------------------------
 

@@ -9,13 +9,17 @@ using Debug = UnityEngine.Debug;
 public class GameSingleStageLoader : IStageLoader
 {
     private ulong m_stageID;
-    private Action<float> m_onProgress;
+    
+    private IProgress<float> m_onProgress;
+    private IProgress<bool> m_onComplete;
  
     private CancellationTokenSource m_ctsLoad;
     
-    public UniTaskVoid Load(ulong stageID, Action<float> onProgress)
+    public UniTaskVoid Load(ulong stageID, IProgress<float> onProgress, IProgress<bool> onComplete)
     {
         m_onProgress = onProgress;
+        m_onComplete = onComplete;
+        
         m_stageID = stageID;
         
         m_ctsLoad = new CancellationTokenSource();
@@ -36,7 +40,7 @@ public class GameSingleStageLoader : IStageLoader
         
         Log("로딩 시작");
         
-        // --------------------------------------------------------------------------
+        // [Task 1]--------------------------------------------------------------------------
         
         try
         {
@@ -63,7 +67,7 @@ public class GameSingleStageLoader : IStageLoader
         Log("테이블 로딩 성공");
         
         call++;
-        m_onProgress?.Invoke(call / k_callTotal);
+        m_onProgress?.Report(call / k_callTotal);
 
         // --------------------------------------------------------------------------
 
@@ -73,7 +77,7 @@ public class GameSingleStageLoader : IStageLoader
             return;
         }
         
-        // --------------------------------------------------------------------------
+        // [Task 2]--------------------------------------------------------------------------
 
         try
         {
@@ -107,7 +111,8 @@ public class GameSingleStageLoader : IStageLoader
         Log("유닛 소환 성공");
         
         call++;
-        m_onProgress?.Invoke(call / k_callTotal);
+        m_onProgress?.Report(call / k_callTotal);
+        m_onComplete?.Report(true);
     }
     
     [Conditional("UNITY_EDITOR")]

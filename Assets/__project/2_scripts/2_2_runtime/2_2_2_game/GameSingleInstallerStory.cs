@@ -9,12 +9,15 @@ using Debug = UnityEngine.Debug;
 
 public class GameSingleInstallerStory : IGameInstaller
 {
-    private Action<float> m_onProgress;
+    private IProgress<float> m_onProgress;
+    private IProgress<bool> m_onComplete;
+    
     private CancellationTokenSource m_ctsInstall;
     
-    public UniTaskVoid Install(Action<float> onProgress)
+    public UniTaskVoid Install(IProgress<float> onProgress, IProgress<bool> onComplete)
     {
         m_onProgress = onProgress;
+        m_onComplete = onComplete;
 
         m_ctsInstall = new CancellationTokenSource();
 
@@ -31,7 +34,7 @@ public class GameSingleInstallerStory : IGameInstaller
         
         Log("설치 시작");
         
-        // --------------------------------------------------------------------------
+        // [Task 1]--------------------------------------------------------------------------
         
 #if true
         for (float x = 0.0f; x < 1.0f; x += Time.deltaTime)
@@ -60,9 +63,9 @@ public class GameSingleInstallerStory : IGameInstaller
         Log("네트워크 연결 성공");
         
         call++;
-        m_onProgress?.Invoke(call / k_callTotal);
+        m_onProgress?.Report(call / k_callTotal);
         
-        // --------------------------------------------------------------------------
+        // [Task 2]--------------------------------------------------------------------------
         
         try
         {
@@ -94,7 +97,8 @@ public class GameSingleInstallerStory : IGameInstaller
         Log("유닛 소환 성공");
         
         call++;
-        m_onProgress?.Invoke(call / k_callTotal);
+        m_onProgress?.Report(call / k_callTotal);
+        m_onComplete?.Report(true);
     }
 
     public void Dispose()
