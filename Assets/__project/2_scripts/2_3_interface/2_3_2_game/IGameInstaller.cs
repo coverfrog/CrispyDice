@@ -2,5 +2,5 @@
 
 public interface IGameInstaller : IDisposable
 {
-    void Install(GameSingleMono owner);
+    void Install(Action onInstalled);
 }

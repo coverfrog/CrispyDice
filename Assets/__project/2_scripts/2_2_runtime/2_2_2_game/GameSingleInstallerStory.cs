@@ -8,20 +8,18 @@ using UnityEngine;
 
 public class GameSingleInstallerStory : IGameInstaller
 {
-    private GameSingleMono m_owner;
-    
+    private Action m_onInstalled;
     private CancellationTokenSource m_ctsInstall;
     
-    public void Install(GameSingleMono owner)
+    public void Install(Action onInstalled)
     {
-        m_owner = owner;
-        
+        m_onInstalled = onInstalled;
         m_ctsInstall = new CancellationTokenSource();
         
-        TaskInstall(m_ctsInstall.Token);
+        TaskInstall(m_ctsInstall.Token).Forget();
     }
 
-    private async UniTaskVoid TaskInstall(CancellationToken token)
+    private async UniTaskVoid TaskInstall(CancellationToken cancelToken)
     {
 #if UNITY_EDITOR
         Debug.Log("[Installer] 설치 시작");
@@ -36,19 +34,19 @@ public class GameSingleInstallerStory : IGameInstaller
 #if true
         for (float x = 0.0f; x < 1.0f; x += Time.deltaTime)
         {
-            if (token.IsCancellationRequested)
+            if (cancelToken.IsCancellationRequested)
             {
                 return;
             }
 
-            await UniTask.Yield(token);
+            await UniTask.Yield(cancelToken);
         }
 
         SessionManager.Instance.Session_Host(null, null);
 #endif
 
         bool isConn = !await UniTask
-            .WaitUntil(() => NetworkClient.active, cancellationToken: token)
+            .WaitUntil(() => NetworkClient.active, cancellationToken: cancelToken)
             .TimeoutWithoutException(TimeSpan.FromSeconds(3.0f));
 
         if (!isConn)
@@ -56,6 +54,7 @@ public class GameSingleInstallerStory : IGameInstaller
             Debug.Assert(false, "[Installer] 네트워크 연결 실패");
             return;
         }
+        
 #if UNITY_EDITOR
         Debug.Log("[Installer] 네트워크 연결 성공");
 #endif
@@ -65,24 +64,29 @@ public class GameSingleInstallerStory : IGameInstaller
 #if UNITY_EDITOR
         Debug.Log("[Installer] 유닛 소환 시도");
 #endif
+        
         try
         {
-            UniTask<UnitMono> unitTask0 = AddressableUtil.InstantiateAsync<UnitMono>("unit/1");
-            UniTask<UnitMono> unitTask1 = AddressableUtil.InstantiateAsync<UnitMono>("unit/2");
-            
-            bool isUnitSpawned = !await UniTask
-                .WaitUntil(() => unitTask0.Status == UniTaskStatus.Succeeded && unitTask1.Status == UniTaskStatus.Succeeded, cancellationToken: token)
+            UniTask<UnitMono1> unitLocalSpawnTask = AddressableUtil.InstantiateAsync<UnitMono1>("unit/1");
+                
+            bool isUnitLocalSpawned = !await UniTask
+                .WaitUntil(() => unitLocalSpawnTask.Status == UniTaskStatus.Succeeded, cancellationToken: cancelToken)
                 .TimeoutWithoutException(TimeSpan.FromSeconds(3.0f));
 
-            if (!isUnitSpawned)
+            if (!isUnitLocalSpawned)
             {
                 Debug.Assert(false, "[Installer] 유닛 소환 실패");
                 return;
             }
+
+            UnitMono1 unit = unitLocalSpawnTask.GetAwaiter().GetResult();
+            unit.gameObject.name = "Player";
+            
+            await unit.TaskLoad(1);
         }
-        catch
+        catch (Exception e)
         {
-            Debug.Assert(false, "[Installer] 유닛 소환 실패");
+            Debug.Assert(false, "[Installer] 유닛 소환 실패 : " + e.Message);
             return;
         }
         
@@ -92,21 +96,11 @@ public class GameSingleInstallerStory : IGameInstaller
         
         // --------------------------------------------------------------------------
         
-        {   // 유닛 스탯
-            
-        }
-
-        // _____
-        
-        {   // 유닛 UI
-            
-        }
+        m_onInstalled?.Invoke();
     }
 
     public void Dispose()
     {
-        m_owner = null;
-
         if (m_ctsInstall != null)
         {
             m_ctsInstall.Cancel();

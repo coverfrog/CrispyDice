@@ -3,14 +3,21 @@ using UnityEngine;
 
 public class GameSingleMono : MonoBehaviour
 {
+    private bool m_isInstalled;
+    
     private void Start()
     {
-        Setup();
+        Install();
     }
 
-    private void Setup()
+    private void Install()
     {
         IGameInstaller installer = new GameSingleInstallerStory();
-        installer.Install(this);
+        installer.Install(OnInstalled);
+    }
+
+    private void OnInstalled()
+    {
+        
     }
 }
