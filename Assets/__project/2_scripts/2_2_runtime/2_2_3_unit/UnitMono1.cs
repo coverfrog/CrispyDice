@@ -34,6 +34,9 @@ public class UnitMono1 : NetworkBehaviour
         SPUM_Prefabs spum = await AddressableUtil.InstantiateAsync<SPUM_Prefabs>($"model/{id}", m_trFlip);
         m_animator = spum._anim;
 
-        m_status.Setup();
+        StatusConsTable statusTable = await AddressableUtil.LoadAsync<StatusConsTable>("cons_table/status");
+        m_status.Setup(statusTable.Data[id]);
+        
+        AddressableUtil.Unload("cons_table/status");
     }
 }

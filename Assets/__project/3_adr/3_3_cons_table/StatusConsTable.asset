@@ -1,0 +1,26 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 947ba97ace79461e9a13992969b9d474, type: 3}
+  m_Name: StatusConsTable
+  m_EditorClassIdentifier: Assembly-CSharp::StatusConsTable
+  m_data:
+    m_entries:
+    - Key: 1
+      Value:
+        m_id: 1
+        m_hpMax: 20
+        m_spMax: 20
+    - Key: 2
+      Value:
+        m_id: 2
+        m_hpMax: 10
+        m_spMax: 20
