@@ -1,6 +1,8 @@
-﻿using UnityEngine;
+﻿using Mirror;
+using UnityEngine;
 
-public class UnitMono : MonoBehaviour
+[RequireComponent(typeof(NetworkIdentity))]
+public class UnitMono : NetworkBehaviour
 {
     
 }
