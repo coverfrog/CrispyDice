@@ -71,6 +71,8 @@ public class GameSingleInstallerStory : IGameInstaller
 
             UnitMono1 unit = unitLocalSpawnTask.GetAwaiter().GetResult();
             unit.gameObject.name = "Player";
+            unit.transform.position = Vector3.left;
+            unit.Flip(true);
             
             await unit.TaskLoad(1);
         }

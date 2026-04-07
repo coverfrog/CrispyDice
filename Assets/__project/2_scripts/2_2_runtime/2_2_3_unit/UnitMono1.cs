@@ -39,4 +39,15 @@ public class UnitMono1 : NetworkBehaviour
         
         AddressableUtil.Unload("cons_table/status");
     }
+
+    public void Flip(bool isRight)
+    {
+        if (!m_trFlip)
+        {
+            Debug.Assert(false,"[Unit] Flip 탐색 오류");
+            return;
+        }
+
+        m_trFlip.localScale = isRight ? new Vector3(-1, 1, 1) : new Vector3(+1, 1, 1);
+    }
 }

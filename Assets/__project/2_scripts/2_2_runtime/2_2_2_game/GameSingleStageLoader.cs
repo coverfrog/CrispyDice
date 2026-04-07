@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.Threading;
 using Cysharp.Threading.Tasks;
 using FrogLibrary;
+using UnityEngine;
 using Debug = UnityEngine.Debug;
 
 public class GameSingleStageLoader : IStageLoader
@@ -57,7 +58,7 @@ public class GameSingleStageLoader : IStageLoader
         }
         
         Log("테이블 로딩 성공");
-        
+
         // --------------------------------------------------------------------------
 
         if (!table.Data.TryGetValue(m_stageID, out StageCons stageCons))
@@ -83,7 +84,9 @@ public class GameSingleStageLoader : IStageLoader
             }
         
             UnitMono1 unit = unitLocalSpawnTask.GetAwaiter().GetResult();
-            unit.gameObject.name = $"Enemy - {m_stageID}";
+            unit.gameObject.name = $"Enemy";
+            unit.transform.position = Vector3.right;
+            unit.Flip(false);
             
             await unit.TaskLoad(stageCons.EnemyID);
         }
@@ -95,6 +98,10 @@ public class GameSingleStageLoader : IStageLoader
         
         Log("유닛 소환 성공");
                 
+        // --------------------------------------------------------------------------
+        
+        AddressableUtil.Unload(k_adrTable);
+        
         // --------------------------------------------------------------------------
         
         m_onLoaded?.Invoke();
