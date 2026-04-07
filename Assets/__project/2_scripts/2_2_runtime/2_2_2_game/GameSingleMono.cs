@@ -24,16 +24,18 @@ public class GameSingleMono : MonoBehaviour
      
         // --------------------------------------------------------------------------
 
+        const float uiUpdateDuration = 0.3f;
+        
+        UILoadingPanel loadingPanel = UIManager.Instance.LoadingPanel;
+        
+        loadingPanel.Open();
+        
         IProgress<float> progress = new Progress<float>(p =>
         {
-            Debug.Log($"[작업 진행] {p}");
+            loadingPanel.UpdateProgress(this, p, duration: uiUpdateDuration);
         });
         
-        // --------------------------------------------------------------------------
-        
-        UIManager.Instance.LoadingPanel.Open();
-        
-        // --------------------------------------------------------------------------
+        // [ Task 1 ]--------------------------------------------------------------------------
         
         installer.Install(p =>
         {
@@ -45,7 +47,7 @@ public class GameSingleMono : MonoBehaviour
         
         await UniTask.WaitUntil(() => call == callTarget);
         
-        // --------------------------------------------------------------------------
+        // [ Task 2 ]--------------------------------------------------------------------------
 
         callTarget++;
         
@@ -58,5 +60,13 @@ public class GameSingleMono : MonoBehaviour
         });
         
         await UniTask.WaitUntil(() => call == callTarget);
+        
+        // --------------------------------------------------------------------------
+
+        await UniTask.WaitForSeconds(uiUpdateDuration);
+        
+        // --------------------------------------------------------------------------
+        
+        loadingPanel.Close();
     }
 }
