@@ -33,6 +33,11 @@ namespace FrogLibrary
                     {
                         className = "StatusConsTable",
                         excelName =  "StatusConsTable"
+                    },
+                    new()
+                    {
+                        className = "StageConsTable",
+                        excelName =  "StageConsTable"
                     }
                 }
             };

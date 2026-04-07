@@ -1,10 +1,11 @@
 ﻿using System;
-using System.Collections;
+using System.Diagnostics;
 using System.Threading;
 using Cysharp.Threading.Tasks;
 using FrogLibrary;
 using Mirror;
 using UnityEngine;
+using Debug = UnityEngine.Debug;
 
 public class GameSingleInstallerStory : IGameInstaller
 {
@@ -21,15 +22,9 @@ public class GameSingleInstallerStory : IGameInstaller
 
     private async UniTaskVoid TaskInstall(CancellationToken cancelToken)
     {
-#if UNITY_EDITOR
-        Debug.Log("[Installer] 설치 시작");
-#endif
+        Log("설치 시작");
         
         // --------------------------------------------------------------------------
-        
-#if UNITY_EDITOR
-        Debug.Log("[Installer] 네트워크 연결 대기");
-#endif
         
 #if true
         for (float x = 0.0f; x < 1.0f; x += Time.deltaTime)
@@ -51,19 +46,14 @@ public class GameSingleInstallerStory : IGameInstaller
 
         if (!isConn)
         {
-            Debug.Assert(false, "[Installer] 네트워크 연결 실패");
+            Log("네트워크 연결 실패", true);
             return;
         }
         
-#if UNITY_EDITOR
-        Debug.Log("[Installer] 네트워크 연결 성공");
-#endif
+        Log("네트워크 연결 성공");
+        
         
         // --------------------------------------------------------------------------
-        
-#if UNITY_EDITOR
-        Debug.Log("[Installer] 유닛 소환 시도");
-#endif
         
         try
         {
@@ -75,7 +65,7 @@ public class GameSingleInstallerStory : IGameInstaller
 
             if (!isUnitLocalSpawned)
             {
-                Debug.Assert(false, "[Installer] 유닛 소환 실패");
+                Log("유닛 소환 실패", true);
                 return;
             }
 
@@ -86,13 +76,11 @@ public class GameSingleInstallerStory : IGameInstaller
         }
         catch (Exception e)
         {
-            Debug.Assert(false, "[Installer] 유닛 소환 실패 : " + e.Message);
+            Log("유닛 소환 실패\n" + e.Message, true);
             return;
         }
         
-#if UNITY_EDITOR
-        Debug.Log("[Installer] 유닛 소환 성공");
-#endif
+        Log("유닛 소환 성공");
         
         // --------------------------------------------------------------------------
         
@@ -107,5 +95,16 @@ public class GameSingleInstallerStory : IGameInstaller
             m_ctsInstall.Dispose();
             m_ctsInstall = null;
         }
+    }
+
+    [Conditional("UNITY_EDITOR")]
+    private void Log(object o, bool isError = false)
+    {
+        const string tag = "[Game Installer]";
+        
+        if (isError)
+            Debug.LogError($"{tag} {o}");
+        else
+            Debug.Log($"{tag} {o}");
     }
 }

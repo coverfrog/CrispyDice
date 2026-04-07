@@ -18,6 +18,12 @@ public class GameSingleMono : MonoBehaviour
 
     private void OnInstalled()
     {
+        IStageLoader loader = new GameSingleStageLoader();
+        loader.Load(1, OnStageLoaded);
+    }
+
+    private void OnStageLoaded()
+    {
         
     }
 }
