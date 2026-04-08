@@ -26,7 +26,7 @@ public class GameSingleInstallerStory : IGameInstaller
 
     private async UniTaskVoid TaskInstall(CancellationToken cancelToken)
     {
-        const float k_callTotal = 2;
+        const float k_callTotal = 3;
 
         int call = 0;
 
@@ -66,6 +66,8 @@ public class GameSingleInstallerStory : IGameInstaller
         m_onProgress?.Report(call / k_callTotal);
         
         // [Task 2]--------------------------------------------------------------------------
+
+        UnitMono1 unit;
         
         try
         {
@@ -77,11 +79,11 @@ public class GameSingleInstallerStory : IGameInstaller
 
             if (!isUnitLocalSpawned)
             {
-                Log("유닛 소환 실패", true);
+                Log("유닛 소환 실패 (로컬)", true);
                 return;
             }
 
-            UnitMono1 unit = unitLocalSpawnTask.GetAwaiter().GetResult();
+            unit = unitLocalSpawnTask.GetAwaiter().GetResult();
             unit.gameObject.name = "Player";
             unit.transform.position = Vector3.left * 2;
             unit.Flip(true);
@@ -90,14 +92,36 @@ public class GameSingleInstallerStory : IGameInstaller
         }
         catch (Exception e)
         {
-            Log("유닛 소환 실패\n" + e.Message, true);
+            Log("유닛 소환 실패 (로컬)\n" + e.Message, true);
             return;
         }
         
-        Log("유닛 소환 성공");
+        Log("유닛 소환 성공 (로컬)");
         
         call++;
         m_onProgress?.Report(call / k_callTotal);
+        
+        // [Task 3]--------------------------------------------------------------------------
+        
+        NetworkServer.Spawn(unit.gameObject);
+        
+        bool isUnitNetSpawned = !await UniTask
+            .WaitUntil(() => unit.netIdentity.netId != 0, cancellationToken: cancelToken)
+            .TimeoutWithoutException(TimeSpan.FromSeconds(3.0f));
+        
+        if (!isUnitNetSpawned)
+        {
+            Log("유닛 소환 실패 (네트워크)", true);
+            return;
+        }
+        
+        Log("유닛 소환 성공 (네트워크)");
+        
+        call++;
+        m_onProgress?.Report(call / k_callTotal);
+        
+        // --------------------------------------------------------------------------
+        
         m_onComplete?.Report(true);
     }
 

@@ -12,6 +12,8 @@ public class UILoadingPanel : MonoBehaviour
 
     private Tween m_twProgress;
     
+    // --------------------------------------------------------------------------
+    
     public void Open()
     {
         gameObject.SetActive(true);
@@ -29,6 +31,8 @@ public class UILoadingPanel : MonoBehaviour
         }
     }
 
+    // --------------------------------------------------------------------------
+    
     public void UpdateProgress(Object sender, float progress, bool isSnap = false, float duration = 0.3f)
     {
         progress = Mathf.Clamp01(progress);

@@ -13,6 +13,8 @@ public class GameSingleMono : MonoBehaviour
 
     private async UniTaskVoid Setup()
     {
+        // 스테이지 로딩은 원래 따로 들어가야 하지만 초기 로딩에는 포함 되서 같이 넣어둠
+        
         IGameInstaller installer = new GameSingleInstallerStory();
         IStageLoader loader = new GameSingleStageLoader();
 
@@ -23,15 +25,14 @@ public class GameSingleMono : MonoBehaviour
 
         // --------------------------------------------------------------------------
 
-        const float uiUpdateDuration = 0.3f;
+        const float k_uiDuration = 0.3f;
         
         UILoadingPanel loadingPanel = UIManager.Instance.LoadingPanel;
-        
         loadingPanel.Open();
         
         IProgress<float> progress = new Progress<float>(p =>
         {
-            loadingPanel.UpdateProgress(this, p, duration: uiUpdateDuration);
+            loadingPanel.UpdateProgress(this, p, duration: k_uiDuration);
         });
 
         // [ Task 1 ]--------------------------------------------------------------------------
@@ -70,10 +71,75 @@ public class GameSingleMono : MonoBehaviour
         
         // --------------------------------------------------------------------------
 
-        await UniTask.WaitForSeconds(uiUpdateDuration);
+        await UniTask.WaitForSeconds(k_uiDuration);
+        await UniTask.WaitForSeconds(0.5f);
         
         // --------------------------------------------------------------------------
         
         loadingPanel.Close();
+        
+        // --------------------------------------------------------------------------
+        
+        Betting().Forget();
+    }
+
+    private async UniTaskVoid Betting()
+    {
+        bool isDone = false;
+        int selectDice = 1;
+        
+        // --------------------------------------------------------------------------
+        
+        UIGameSinglePanel gameSinglePanel = UIManager.Instance.GameSinglePanel;
+        gameSinglePanel.Open();
+        gameSinglePanel.ActiveBetting(true);
+        gameSinglePanel.SetSubject("BETTING");
+        gameSinglePanel.SelectDice(selectDice);
+        gameSinglePanel.OnBettingSelect = new Progress<int>(dice =>
+        {
+            int prevSelectDice = selectDice;
+            selectDice = dice;
+            
+            gameSinglePanel.UnselectDice(prevSelectDice);
+            gameSinglePanel.SelectDice(selectDice);
+        });
+        gameSinglePanel.OnBettingSubmit = new Progress<bool>(_ =>
+        {
+            isDone = true;
+        });
+        
+        // --------------------------------------------------------------------------
+        
+        await UniTask.WaitUntil(() => isDone);
+
+        const float k_uiDuration = 0.2f;
+        
+        gameSinglePanel.OnBettingSelect = null;
+        gameSinglePanel.OnBettingSubmit = null;
+        gameSinglePanel.UnselectDice(selectDice, k_uiDuration);
+        
+        await UniTask.WaitForSeconds(k_uiDuration);
+        
+        gameSinglePanel.ActiveBetting(false);
+        
+        // --------------------------------------------------------------------------
+        
+        RollDice().Forget();
+    }
+
+    private async UniTaskVoid RollDice()
+    {
+        UIGameSinglePanel gameSinglePanel = UIManager.Instance.GameSinglePanel;
+        gameSinglePanel.SetSubject("ROLL");
+        
+        foreach (UnitMono1 unit in DataManager.Instance.Units)
+        {
+            unit.Dices.Clear();
+
+            for (int i = 0; i < 3; i++)
+            {
+                unit.Dices.Add(Rand.Next(1, 6));
+            }
+        }
     }
 }

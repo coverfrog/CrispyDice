@@ -15,6 +15,12 @@ public class UnitMono1 : NetworkBehaviour
     [Header("Dynamic")]
     [SerializeField] private Animator m_animator;
     
+    // --------------------------------------------------------------------------
+
+    public readonly SyncList<int> Dices = new();
+    
+    // --------------------------------------------------------------------------
+    
     public override void OnStartClient()
     {
         base.OnStartClient();
