@@ -95,7 +95,7 @@ public class GameSingleStageLoader : IStageLoader
         
             UnitMono1 unit = unitLocalSpawnTask.GetAwaiter().GetResult();
             unit.gameObject.name = $"Enemy";
-            unit.transform.position = Vector3.right;
+            unit.transform.position = Vector3.right * 2;
             unit.Flip(false);
             
             await unit.TaskLoad(stageCons.EnemyID);
