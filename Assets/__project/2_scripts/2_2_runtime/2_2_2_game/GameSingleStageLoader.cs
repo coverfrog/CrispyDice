@@ -31,7 +31,7 @@ public class GameSingleStageLoader : IStageLoader
     private async UniTaskVoid TaskLoad(CancellationToken cancelToken)
     {
         const string k_adrTable = "cons_table/stage";
-        const float k_callTotal = 3;
+        const float k_callTotal = 4;
 
         int call = 0;
         
@@ -80,11 +80,11 @@ public class GameSingleStageLoader : IStageLoader
         
         // [Task 2]--------------------------------------------------------------------------
 
-        UnitMono1 unit;
+        UnitMonoSingle unit;
         
         try
         {
-            UniTask<UnitMono1> unitLocalSpawnTask = AddressableUtil.InstantiateAsync<UnitMono1>("unit/1");
+            UniTask<UnitMonoSingle> unitLocalSpawnTask = AddressableUtil.InstantiateAsync<UnitMonoSingle>("unit/single");
       
             bool isUnitLocalSpawned = !await UniTask
                 .WaitUntil(() => unitLocalSpawnTask.Status == UniTaskStatus.Succeeded, cancellationToken: cancelToken)
@@ -98,8 +98,9 @@ public class GameSingleStageLoader : IStageLoader
         
             unit = unitLocalSpawnTask.GetAwaiter().GetResult();
             unit.gameObject.name = $"Enemy";
-            unit.transform.position = Vector3.right * 2;
+            unit.transform.position = Vector3.right * 3;
             unit.Flip(false);
+            unit.SetIsEnemy(true);
             
             await unit.TaskLoad(stageCons.EnemyID);
         }
@@ -135,8 +136,21 @@ public class GameSingleStageLoader : IStageLoader
         call++;
         m_onProgress?.Report(call / k_callTotal);
         
+                
+        // [Task 4]--------------------------------------------------------------------------
+
+        UIManager.Instance.GameSinglePanel.UpdateUnitView(isSnap: true);
+
+        for (int i = 0; i < 2; i++)
+        {
+            await UniTask.WaitForEndOfFrame(cancelToken);
+        }
+
+        call++;
+        m_onProgress?.Report(call / k_callTotal);
+
         // --------------------------------------------------------------------------
-        
+
         m_onComplete?.Report(true);
     }
     

@@ -23,11 +23,11 @@ public class UIDiceViewGroup : MonoBehaviour
 
     // --------------------------------------------------------------------------
     
-    public void SelectDice(int dice)
+    public void SelectDice(int dice, bool isSnap = false)
     {
         if (m_dices.TryGetValue(dice, out UIDiceView view))
         {
-            view.SelectDice();
+            view.SelectDice(isSnap);
         }
     }
 

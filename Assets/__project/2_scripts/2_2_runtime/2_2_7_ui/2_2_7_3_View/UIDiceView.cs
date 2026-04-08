@@ -8,14 +8,22 @@ public class UIDiceView : MonoBehaviour
     
     private Tween m_twScale;
     
-    public void SelectDice()
+    public void SelectDice(bool isSnap = false)
     {
         if (m_twScale is { active: true })
         {
             m_twScale.Kill();
         }
-        
-        m_twScale = transform.DOScale(k_maxScale, k_duration);
+
+        if (isSnap)
+        {
+            transform.localScale = Vector3.one * k_maxScale;
+        }
+
+        else
+        {
+            m_twScale = transform.DOScale(k_maxScale, k_duration);
+        }
     }
 
     public void UnselectDice(float duration = 0.2f, bool isSnap = false)

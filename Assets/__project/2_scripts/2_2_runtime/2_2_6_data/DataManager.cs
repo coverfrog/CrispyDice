@@ -6,7 +6,7 @@ public class DataManager : MonoBehaviour
 {
     public static DataManager Instance { get; private set; }
 
-    public readonly List<UnitMono1> Units = new();
+    public readonly List<UnitMonoSingle> UnitSingles = new();
     
     private void Awake()
     {
