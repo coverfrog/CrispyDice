@@ -139,7 +139,7 @@ public class GameSingleStageLoader : IStageLoader
                 
         // [Task 4]--------------------------------------------------------------------------
 
-        UIManager.Instance.GameSinglePanel.UpdateUnitView(isSnap: true);
+        UIManager.Instance.GameSinglePanel.UpdateUnitView(0.0f, true);
 
         for (int i = 0; i < 2; i++)
         {

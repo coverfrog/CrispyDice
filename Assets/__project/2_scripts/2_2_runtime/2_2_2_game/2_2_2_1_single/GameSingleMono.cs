@@ -77,6 +77,26 @@ public class GameSingleMono : MonoBehaviour
         
         // --------------------------------------------------------------------------
 
+        List<UnitMonoSingle> units = DataManager.Instance.UnitSingles;
+
+        m_players = new Dictionary<bool, GameSinglePlayer>()
+        {
+            {
+                true, new GameSinglePlayer()
+                {
+                    Unit = units.Find(x => !x.IsEnemy),
+                    DiceGroup = m_diceGroupMe
+                }
+            },
+            {
+                false, new GameSinglePlayer()
+                {
+                    Unit = units.Find(x => x.IsEnemy),
+                    DiceGroup = m_diceGroupEnemy
+                }
+            }
+        };
+        
         await UniTask.WaitForSeconds(k_uiDuration);
         await UniTask.WaitForSeconds(0.5f);
         
@@ -106,7 +126,7 @@ public class GameSingleMono : MonoBehaviour
             int prevSelectDice = selectDice;
             selectDice = dice;
             
-            gameSinglePanel.UnselectDice(prevSelectDice);
+            gameSinglePanel.UnselectDice(prevSelectDice, 0.2f);
             gameSinglePanel.SelectDice(selectDice);
         });
         gameSinglePanel.OnBettingSubmit = new Progress<bool>(_ =>
@@ -119,6 +139,9 @@ public class GameSingleMono : MonoBehaviour
         await UniTask.WaitUntil(() => isDone);
 
         const float k_uiDuration = 0.2f;
+        
+        m_players[true].Unit.Select(selectDice); 
+        m_players[false].Unit.SelectAuto();
         
         gameSinglePanel.OnBettingSelect = null;
         gameSinglePanel.OnBettingSubmit = null;
@@ -155,24 +178,6 @@ public class GameSingleMono : MonoBehaviour
         // --------------------------------------------------------------------------
 
         List<UnitMonoSingle> units = DataManager.Instance.UnitSingles;
-
-        m_players = new Dictionary<bool, GameSinglePlayer>()
-        {
-            {
-                true, new GameSinglePlayer()
-                {
-                    Unit = units.Find(x => !x.IsEnemy),
-                    DiceGroup = m_diceGroupMe
-                }
-            },
-            {
-                false, new GameSinglePlayer()
-                {
-                    Unit = units.Find(x => x.IsEnemy),
-                    DiceGroup = m_diceGroupEnemy
-                }
-            }
-        };
         
         m_players[false].Unit.ActiveDice(true);
         
@@ -221,7 +226,7 @@ public class GameSingleMono : MonoBehaviour
         
         foreach (GameSinglePlayer player in m_players.Values)
         {
-            player.Roll(diceFaces, k_rollDuration);
+            player.RollDice(diceFaces, k_rollDuration);
             player.ApplyStatus();
         }
         
@@ -236,22 +241,37 @@ public class GameSingleMono : MonoBehaviour
 
     private async UniTaskVoid Battle()
     {
-        IBattle battle = new GameSingleBattle();
+        const float k_turnDuration = 0.4f;
 
-        bool isDone = false;
-        bool isDead = false;
+        const float k_scaleDiceMe = 1.2f;
+        const float k_scaleDiceEnemy = 1.8f;
         
-        battle.Attack(m_players[true].Unit,m_players[false].Unit, new Progress<bool>(dead =>
-        {
-            isDead = dead;
-            isDone = true;
-        }));
+        // [Sp]--------------------------------------------------------------------------
         
-        await UniTask.WaitUntil(() => isDone);
+        m_players[true].ScaleDice(0, k_turnDuration, k_scaleDiceMe);
+        UIManager.Instance.GameSinglePanel.UpdateUnitView(k_turnDuration, false, true);
 
-        if (isDead)
-        {
-            
-        }
+        await UniTask.WaitForSeconds(k_turnDuration);
+        await UniTask.WaitForEndOfFrame();
+        
+        m_players[false].ScaleDice(0, k_turnDuration, k_scaleDiceEnemy);
+        UIManager.Instance.GameSinglePanel.UpdateUnitView(k_turnDuration, false, false);
+
+        await UniTask.WaitForSeconds(k_turnDuration);
+        await UniTask.WaitForEndOfFrame();
+
+        // [Attack]--------------------------------------------------------------------------
+
+        m_players[true].ScaleDice(1, k_turnDuration, k_scaleDiceMe);
+        m_players[true].Attack(m_players[false].Unit, k_turnDuration);
+        
+        // --------------------------------------------------------------------------
+        
+        
+        // --------------------------------------------------------------------------
+        
+        
+        // --------------------------------------------------------------------------
+        
     }
 }

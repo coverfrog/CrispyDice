@@ -18,4 +18,15 @@ public class DiceMonoGroup : MonoBehaviour
             m_dices[i].Roll(Quaternion.Euler(faces[dices[i]]),duration * 0.8f, duration * 0.2f);
         }
     }
+
+    public void Scale(int index, float duration, float maxScale)
+    {
+        if (index >= m_dices.Count)
+        {
+            Debug.Assert(false, "유효하지 않습니다.");
+            return;
+        }
+        
+        m_dices[index].Scale(duration, maxScale);
+    }
 }

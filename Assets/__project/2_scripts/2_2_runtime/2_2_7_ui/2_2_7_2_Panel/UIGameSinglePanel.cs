@@ -49,10 +49,18 @@ public class UIGameSinglePanel : MonoBehaviour
 
     // --------------------------------------------------------------------------
 
-    public void UpdateUnitView(float duration = 0.2f, bool isSnap = false)
+    public void UpdateUnitView(float duration, bool isSnap)
     {
         m_unitMe.UpdateUnitView(DataManager.Instance.UnitSingles.Find(x => !x.IsEnemy), duration, isSnap);
         m_unitEnemy.UpdateUnitView(DataManager.Instance.UnitSingles.Find(x => x.IsEnemy), duration, isSnap);
+    }
+    
+    public void UpdateUnitView(float duration, bool isSnap, bool isMe)
+    {
+        if (isMe)
+            m_unitMe.UpdateUnitView(DataManager.Instance.UnitSingles.Find(x => !x.IsEnemy), duration, isSnap);
+        else
+            m_unitEnemy.UpdateUnitView(DataManager.Instance.UnitSingles.Find(x => x.IsEnemy), duration, isSnap);
     }
     
     // --------------------------------------------------------------------------
@@ -67,7 +75,7 @@ public class UIGameSinglePanel : MonoBehaviour
         if (m_diceGroup != null) m_diceGroup.SelectDice(dice, isSnap);
     }
 
-    public void UnselectDice(int dice, float duration = 0.2f)
+    public void UnselectDice(int dice, float duration)
     {
         if (m_diceGroup != null) m_diceGroup.UnselectDice(dice, duration);
     }
