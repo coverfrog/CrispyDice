@@ -169,7 +169,6 @@ MonoBehaviour:
   - {fileID: 9032002379601137585}
   - {fileID: 7098075401315239383}
   - {fileID: 7186122384628753480}
-  m_faces: {fileID: 11400000, guid: efd855f2029ef54458ff10184f0efd81, type: 2}
 --- !u!1 &214261135
 GameObject:
   m_ObjectHideFlags: 0
@@ -203,7 +202,6 @@ MonoBehaviour:
   - {fileID: 1184990511}
   - {fileID: 1613661578}
   - {fileID: 516420506}
-  m_faces: {fileID: 11400000, guid: efd855f2029ef54458ff10184f0efd81, type: 2}
 --- !u!4 &214261137
 Transform:
   m_ObjectHideFlags: 0

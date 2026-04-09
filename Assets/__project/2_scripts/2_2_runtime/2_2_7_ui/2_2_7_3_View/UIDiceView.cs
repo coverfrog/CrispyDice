@@ -1,3 +1,4 @@
+using System;
 using DG.Tweening;
 using UnityEngine;
 
@@ -10,10 +11,7 @@ public class UIDiceView : MonoBehaviour
     
     public void SelectDice(bool isSnap = false)
     {
-        if (m_twScale is { active: true })
-        {
-            m_twScale.Kill();
-        }
+        CancelScale();
 
         if (isSnap)
         {
@@ -28,10 +26,7 @@ public class UIDiceView : MonoBehaviour
 
     public void UnselectDice(float duration = 0.2f, bool isSnap = false)
     {
-        if (m_twScale is { active: true })
-        {
-            m_twScale.Kill();
-        }
+        CancelScale();
 
         if (isSnap)
         {
@@ -41,5 +36,19 @@ public class UIDiceView : MonoBehaviour
         {
             m_twScale = transform.DOScale(1.0f, duration);
         }
+    }
+
+    public void CancelScale()
+    {
+        if (m_twScale is { active: true })
+        {
+            m_twScale.Kill();
+            m_twScale = null;
+        }
+    }
+    
+    private void OnDisable()
+    {
+        CancelScale();
     }
 }

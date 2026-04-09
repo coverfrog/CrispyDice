@@ -112,13 +112,14 @@ public class GameSingleMono : MonoBehaviour
     private async UniTaskVoid Betting()
     {
         bool isDone = false;
-        int selectDice = 1;
+        int selectDice = m_players[true].Unit.GetSelectRemainRand();
         
         // --------------------------------------------------------------------------
         
         UIGameSinglePanel gameSinglePanel = UIManager.Instance.GameSinglePanel;
         gameSinglePanel.Open();
         gameSinglePanel.ActiveBetting(true);
+        gameSinglePanel.ActiveDices(m_players[true].Unit.SelectedDices);
         gameSinglePanel.SetSubject("BETTING");
         gameSinglePanel.SelectDice(selectDice, true);
         gameSinglePanel.OnBettingSelect = new Progress<int>(dice =>
@@ -139,6 +140,8 @@ public class GameSingleMono : MonoBehaviour
         await UniTask.WaitUntil(() => isDone);
 
         const float k_uiDuration = 0.2f;
+        
+        Debug.Log(selectDice);
         
         m_players[true].Unit.Select(selectDice); 
         m_players[false].Unit.SelectAuto();
@@ -243,8 +246,8 @@ public class GameSingleMono : MonoBehaviour
     {
         const float k_turnDuration = 0.4f;
 
-        const float k_scaleDiceMe = 1.2f;
-        const float k_scaleDiceEnemy = 1.8f;
+        const float k_scaleDiceMe = 1.4f;
+        const float k_scaleDiceEnemy = 2.0f;
         
         // [Sp]--------------------------------------------------------------------------
         
@@ -265,13 +268,64 @@ public class GameSingleMono : MonoBehaviour
         m_players[true].ScaleDice(1, k_turnDuration, k_scaleDiceMe);
         m_players[true].Attack(m_players[false].Unit, k_turnDuration);
         
-        // --------------------------------------------------------------------------
+        await UniTask.WaitForSeconds(k_turnDuration);
+        await UniTask.WaitForSeconds(k_turnDuration);
         
+        m_players[false].ScaleDice(1, k_turnDuration, k_scaleDiceMe);
+        m_players[false].Attack(m_players[true].Unit, k_turnDuration);
         
-        // --------------------------------------------------------------------------
+        await UniTask.WaitForSeconds(k_turnDuration);
+        await UniTask.WaitForEndOfFrame();
         
+        UIManager.Instance.GameSinglePanel.UpdateUnitView(k_turnDuration, false);
         
-        // --------------------------------------------------------------------------
+        await UniTask.WaitForSeconds(k_turnDuration);
+        
+        // [Death]--------------------------------------------------------------------------
+        
+        if (!m_players[true].Unit.IsLive && !m_players[false].Unit.IsLive)
+        {
+            GameEnd(GameResult.Draw).Forget();
+            return;
+        }
+        
+        if (!m_players[false].Unit.IsLive)
+        {
+            GameEnd(GameResult.Win).Forget();
+            return;
+        }
+        
+        if (!m_players[true].Unit.IsLive)
+        {
+            GameEnd(GameResult.Lose).Forget();
+            return;
+        }
+        
+        // [Heal]--------------------------------------------------------------------------
+        
+        m_players[true].ScaleDice(2, k_turnDuration, k_scaleDiceMe);
+        m_players[true].Unit.ApplyStatHp();
+        
+        UIManager.Instance.GameSinglePanel.UpdateUnitView(k_turnDuration, false, true);
+
+        await UniTask.WaitForSeconds(k_turnDuration);
+        await UniTask.WaitForEndOfFrame();
+        
+        m_players[false].ScaleDice(2, k_turnDuration, k_scaleDiceEnemy);
+        m_players[false].Unit.ApplyStatHp();
+        
+        UIManager.Instance.GameSinglePanel.UpdateUnitView(k_turnDuration, false, false);
+
+        await UniTask.WaitForSeconds(k_turnDuration);
+        await UniTask.WaitForEndOfFrame();
+        
+        // [Betting]--------------------------------------------------------------------------
+        
+        Betting().Forget();
+    }
+
+    private async UniTaskVoid GameEnd(GameResult result)
+    {
         
     }
 }

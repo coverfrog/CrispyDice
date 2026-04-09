@@ -11,7 +11,9 @@ using UnityEngine;
 public abstract class UnitMono : NetworkBehaviour
 {
     private static readonly int k_animAttack = Animator.StringToHash("2_Attack");
-   
+    private static readonly int k_animDamaged = Animator.StringToHash("3_Damaged");
+    private static readonly int k_animTargetDuration = Animator.StringToHash("TargetDuration");
+
     // --------------------------------------------------------------------------
     
     [Header("Static")]
@@ -21,6 +23,9 @@ public abstract class UnitMono : NetworkBehaviour
     
     [Header("Dynamic")]
     [SerializeField] private Animator m_animator;
+
+    [Header("Debug")] 
+    public bool IsLive;
     
     // --------------------------------------------------------------------------
 
@@ -42,15 +47,17 @@ public abstract class UnitMono : NetworkBehaviour
         m_status.Setup(statusTable.Data[id]);
         
         AddressableUtil.Unload("cons_table/status");
+
+        IsLive = true;
     }
     
     // --------------------------------------------------------------------------
 
     public void Select(int dice)
     {
-        if (Dices.Contains(dice))
+        if (SelectedDices.Contains(dice))
         {
-            Debug.Assert(false, "중복 추가");
+            Debug.Assert(false, $"[{gameObject.name}] 중복 추가 - {dice}");
             return;
         }
         
@@ -60,6 +67,13 @@ public abstract class UnitMono : NetworkBehaviour
     
     public void SelectAuto()
     {
+        int dice = GetSelectRemainRand();
+        
+        Select(dice);
+    }
+
+    public int GetSelectRemainRand()
+    {
         List<int> notSelects = Enumerable.Range(1, 6).Where(x => !SelectedDices.Contains(x)).ToList();
 
         if (notSelects is { Count: 0 })
@@ -68,10 +82,10 @@ public abstract class UnitMono : NetworkBehaviour
             notSelects = Enumerable.Range(1, 6).ToList();
         }
         
-        int index = Rand.Next(0, notSelects.Count);
+        int index = Rand.Next(0, notSelects.Count - 1);
         int dice = notSelects[index];
         
-        Select(dice);
+        return dice;
     }
     
     // --------------------------------------------------------------------------
@@ -92,18 +106,50 @@ public abstract class UnitMono : NetworkBehaviour
     public void AttackNormal(UnitMono target, float duration)
     {
         m_animator.SetTrigger(k_animAttack);
+        m_animator.SetFloat(k_animTargetDuration, duration);
+        
+        target.OnDamage(this, m_status[StatType.Str]);
+    }
+    
+    // --------------------------------------------------------------------------
+
+    public void OnDamage(UnitMono sender, float damage)
+    {
+        m_status[StatType.Hp] = Mathf.Max(0, m_status[StatType.Hp] - damage);
+
+        if (m_status[StatType.Hp] == 0)
+        {
+            IsLive = false;
+        }
+        
+        m_animator.SetTrigger(k_animDamaged);    
     }
     
     // --------------------------------------------------------------------------
 
     public void ApplyStatus()
     {
-        // TODO : 하드 코딩 부분, 데이터 객체 확립 후에 데이터 세팅
-        
+        ApplyStatSp();
+        ApplyStatHp();
+        ApplyStatStr();
+    }
+    
+    public void ApplyStatSp()
+    {
         m_status[StatType.Sp] = Mathf.Min(m_status[StatType.Sp] + Dices[0], m_status[StatType.SpMax]);
-        m_status[StatType.Str] = Dices[1];
+    }
+    
+    public void ApplyStatHp()
+    {
         m_status[StatType.Hp] = Mathf.Min(m_status[StatType.Hp] + Dices[2], m_status[StatType.HpMax]);
     }
+    
+    public void ApplyStatStr()
+    {
+        m_status[StatType.Str] = Dices[1];
+    }
+    
+    // --------------------------------------------------------------------------
 
     public float this[StatType type]
     {

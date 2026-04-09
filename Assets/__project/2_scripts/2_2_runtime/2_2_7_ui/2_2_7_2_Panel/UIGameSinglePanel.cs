@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using Mirror;
 using RTLTMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -68,6 +70,11 @@ public class UIGameSinglePanel : MonoBehaviour
     public void ActiveBetting(bool active)
     {
         if (m_objBetting != null) m_objBetting.SetActive(active);
+    }
+
+    public void ActiveDices(SyncList<int> selectedDices)
+    {
+        if (m_diceGroup != null) m_diceGroup.ActiveDices(selectedDices);
     }
 
     public void SelectDice(int dice, bool isSnap = false)
