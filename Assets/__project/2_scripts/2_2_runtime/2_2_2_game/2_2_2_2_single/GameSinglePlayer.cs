@@ -13,13 +13,23 @@
         DiceGroup.Scale(index, duration, maxScale);
     }
 
-    public void ApplyStatus()
-    {
-        Unit.ApplyStatus();   
-    }
-
     public void Attack(UnitMono target, float duration)
     {
         Unit.AttackNormal(target, duration);
+    }
+
+    public bool IsSp()
+    {
+        return Unit.Dices[0] == Unit.SelectDice;
+    }
+    
+    public bool IsAttack()
+    {
+        return Unit.Dices[1] == Unit.SelectDice;
+    }
+    
+    public bool IsHeal()
+    {
+        return Unit.Dices[2] == Unit.SelectDice;
     }
 }

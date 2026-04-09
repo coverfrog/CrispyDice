@@ -127,13 +127,6 @@ public abstract class UnitMono : NetworkBehaviour
     
     // --------------------------------------------------------------------------
 
-    public void ApplyStatus()
-    {
-        ApplyStatSp();
-        ApplyStatHp();
-        ApplyStatStr();
-    }
-    
     public void ApplyStatSp()
     {
         m_status[StatType.Sp] = Mathf.Min(m_status[StatType.Sp] + Dices[0], m_status[StatType.SpMax]);
