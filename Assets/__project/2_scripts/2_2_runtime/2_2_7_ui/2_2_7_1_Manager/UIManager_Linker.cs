@@ -2,6 +2,24 @@
 
 public partial class UIManager
 {
+    private UIGameSingleResultPanel m_gameSingleResultPanel;
+
+    public UIGameSingleResultPanel GameSingleResultPanel
+    {
+        get
+        {
+            if (m_gameSingleResultPanel == null)
+            {
+                m_gameSingleResultPanel = AddressableUtil.Instantiate<UIGameSingleResultPanel>("ui_panel/game_single_result", m_trOverlayCanvas);
+                m_gameSingleResultPanel.gameObject.SetActive(false);
+            }
+            
+            return m_gameSingleResultPanel;
+        }
+    }
+    
+    // --------------------------------------------------------------------------
+    
     private UIGameSinglePanel m_gameSinglePanel;
 
     public UIGameSinglePanel GameSinglePanel

@@ -6,10 +6,16 @@ public partial class SessionManager
     {
         base.Awake();
         
-        gameObject.name = "Session Manager";
+        if (Instance != null)
+        {
+            Destroy(gameObject);
+            return;
+        }
         
         Instance = this;
         DontDestroyOnLoad(gameObject);
+        
+        gameObject.name = "Session Manager";
     }
 
     public override void Start()

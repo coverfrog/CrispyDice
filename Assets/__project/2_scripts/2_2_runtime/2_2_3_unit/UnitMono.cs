@@ -143,21 +143,28 @@ public abstract class UnitMono : NetworkBehaviour
         return Mathf.Approximately(m_status[StatType.Sp], m_status[StatType.SpMax]);
     }
     
-    public void ApplyStatHp()
-    {
-        m_status[StatType.Hp] = Mathf.Min(m_status[StatType.Hp] + Dices[2], m_status[StatType.HpMax]);
-    }
-    
     public void ApplyStatStr()
     {
         m_status[StatType.Str] = Dices[1];
     }
     
+    public void ApplyStatHp()
+    {
+        m_status[StatType.Hp] = Mathf.Min(m_status[StatType.Hp] + Dices[2], m_status[StatType.HpMax]);
+    }
+    
+ 
+    
     // --------------------------------------------------------------------------
 
-    public void SetStatSp(float sp)
+    public void SetStatSp(float v)
     {
-        m_status[StatType.Sp] = Mathf.Clamp(sp, 0, m_status[StatType.SpMax]);
+        m_status[StatType.Sp] = Mathf.Clamp(v, 0, m_status[StatType.SpMax]);
+    }
+    
+    public void SetStatStr(float v)
+    {
+        m_status[StatType.Str] = v;
     }
     
     // --------------------------------------------------------------------------

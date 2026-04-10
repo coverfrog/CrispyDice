@@ -8,7 +8,11 @@ public class UIUnitView : MonoBehaviour
     public void UpdateUnitView(UnitMono unit, float duration = 0.2f, bool isSnap = false)
     {
         OnUpdateUnitView(unit, m_hpStat, StatType.Hp, StatType.HpMax, duration, isSnap);
-        OnUpdateUnitView(unit, m_spStat, StatType.Sp, StatType.SpMax, duration, isSnap);
+
+        if (unit.IsLive)
+        {
+            OnUpdateUnitView(unit, m_spStat, StatType.Sp, StatType.SpMax, duration, isSnap);
+        }
     }
 
     private void OnUpdateUnitView(UnitMono unit, UIStatView view, StatType cur, StatType max, float duration = 0.2f, bool isSnap = false)

@@ -5,7 +5,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using Object = UnityEngine.Object;
 
-public class UILoadingPanel : MonoBehaviour
+public class UILoadingPanel : UIPanel
 {
     [SerializeField] private Image m_imgGage;
     [SerializeField] private RTLTextMeshPro m_txtProgress;
@@ -14,27 +14,28 @@ public class UILoadingPanel : MonoBehaviour
     
     // --------------------------------------------------------------------------
     
-    public void Open()
+    public override void Open()
     {
-        gameObject.SetActive(true);
+        base.Open();
         
         UpdateProgress(this, 0.0f, true);
     }
 
-    public void Close()
+    // --------------------------------------------------------------------------
+
+    public void CancelProgress()
     {
-        gameObject.SetActive(false);
-        
         if (m_twProgress is { active: true })
         {
             m_twProgress.Kill();
+            m_twProgress = null;
         }
     }
-
-    // --------------------------------------------------------------------------
     
     public void UpdateProgress(Object sender, float progress, bool isSnap = false, float duration = 0.3f)
     {
+        CancelProgress();
+        
         progress = Mathf.Clamp01(progress);
         
         if (m_twProgress is { active: true })

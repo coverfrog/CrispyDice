@@ -10,7 +10,11 @@ public class GameSingleMono : MonoBehaviour
     [SerializeField] private DiceMonoGroup m_diceGroupMe;
     [SerializeField] private DiceMonoGroup m_diceGroupEnemy;
 
-    private Dictionary<bool, GameSinglePlayer> m_players;
+    private UnityDictionary<bool, GameSinglePlayer> m_players;
+    
+    private readonly UnityDictionary<ulong, List<GameSingleResult>> m_results = new();
+    
+    private GameSingleResult m_currentResult;
     
     private void Start()
     {
@@ -61,8 +65,18 @@ public class GameSingleMono : MonoBehaviour
         // [ Task 2 ]--------------------------------------------------------------------------
 
         isDone = false;
+
+        const ulong k_loadStageID = 1; // TODO: 일단 임시로 1번 스테이지만 로드
+
+        if (!m_results.ContainsKey(k_loadStageID))
+        {
+            m_results.Add(k_loadStageID, new List<GameSingleResult>());
+        }
+
+        m_currentResult = new GameSingleResult(k_loadStageID);
+        m_results[k_loadStageID].Add(m_currentResult);
         
-        loader.Load(1, 
+        loader.Load(k_loadStageID, 
             new Progress<float>(p =>
             {
                 progress.Report(call * k_callInterval + p * k_callInterval);
@@ -79,7 +93,7 @@ public class GameSingleMono : MonoBehaviour
 
         List<UnitMonoSingle> units = DataManager.Instance.UnitSingles;
 
-        m_players = new Dictionary<bool, GameSinglePlayer>()
+        m_players = new UnityDictionary<bool, GameSinglePlayer>()
         {
             {
                 true, new GameSinglePlayer()
@@ -223,6 +237,8 @@ public class GameSingleMono : MonoBehaviour
         
         gameSinglePanel.ActiveRollSubmit(false);
 
+        m_currentResult.RollCount++;
+        
         DiceFaces diceFaces = AddressableUtil.Instantiate<DiceFaces>("option/dice_faces");
         
         foreach (GameSinglePlayer player in m_players.Values)
@@ -259,12 +275,9 @@ public class GameSingleMono : MonoBehaviour
 
             if (isMax)
             {
-                m_players[true].AttackNormal(m_players[false].Unit, k_turnDuration);
+                m_players[true].Unit.SetStatStr(m_players[false].Unit[StatType.Hp]);
                 m_players[true].Unit.SetStatSp(0);
-                
-                UIManager.Instance.GameSinglePanel.UpdateUnitView(k_turnDuration, false, true);
-                
-                await UniTask.WaitForSeconds(k_turnDuration);
+                m_players[true].AttackNormal(m_players[false].Unit, k_turnDuration);
             }
         }
         else
@@ -286,12 +299,9 @@ public class GameSingleMono : MonoBehaviour
             
             if (isMax)
             {
-                m_players[false].AttackNormal(m_players[true].Unit, k_turnDuration);
+                m_players[false].Unit.SetStatStr(m_players[true].Unit[StatType.Hp]);
                 m_players[false].Unit.SetStatSp(0);
-                
-                UIManager.Instance.GameSinglePanel.UpdateUnitView(k_turnDuration, false, false);
-                
-                await UniTask.WaitForSeconds(k_turnDuration);
+                m_players[false].AttackNormal(m_players[true].Unit, k_turnDuration);
             }
         }
         else
@@ -300,7 +310,14 @@ public class GameSingleMono : MonoBehaviour
             await UniTask.WaitForSeconds(k_turnDuration);
         }
         
+        UIManager.Instance.GameSinglePanel.UpdateUnitView(k_turnDuration, false);
+        
         await UniTask.WaitForSeconds(k_turnDuration);
+        
+        if (CheckGameEnd())
+        {
+            return;
+        }
 
         // [Attack]--------------------------------------------------------------------------
 
@@ -338,34 +355,8 @@ public class GameSingleMono : MonoBehaviour
         
         await UniTask.WaitForSeconds(k_turnDuration);
         
-        // [Death]--------------------------------------------------------------------------
-        
-        
-        if (!m_players[true].Unit.IsLive && !m_players[false].Unit.IsLive)
+        if (CheckGameEnd())
         {
-            m_players[true].Unit.OnDead();
-            m_players[false].Unit.OnDead();
-            
-            GameEnd(GameResult.Draw).Forget();
-            
-            return;
-        }
-        
-        if (!m_players[false].Unit.IsLive)
-        {
-            m_players[false].Unit.OnDead();
-            
-            GameEnd(GameResult.Win).Forget();
-            
-            return;
-        }
-        
-        if (!m_players[true].Unit.IsLive)
-        {
-            m_players[true].Unit.OnDead();
-            
-            GameEnd(GameResult.Lose).Forget();
-            
             return;
         }
         
@@ -408,10 +399,58 @@ public class GameSingleMono : MonoBehaviour
         Betting().Forget();
     }
 
+    private bool CheckGameEnd()
+    {
+        if (!m_players[true].Unit.IsLive && !m_players[false].Unit.IsLive)
+        {
+            m_players[true].Unit.OnDead();
+            m_players[false].Unit.OnDead();
+            
+            GameEnd(GameResult.Draw).Forget();
+            
+            return true;
+        }
+        
+        if (!m_players[false].Unit.IsLive)
+        {
+            m_players[false].Unit.OnDead();
+            
+            GameEnd(GameResult.Win).Forget();
+            
+            return true;
+        }
+        
+        if (!m_players[true].Unit.IsLive)
+        {
+            m_players[true].Unit.OnDead();
+            
+            GameEnd(GameResult.Lose).Forget();
+            
+            return true;
+        }
+        
+        return false;
+    }
+    
     private async UniTaskVoid GameEnd(GameResult result)
     {
 #if true
         Debug.Log($"[Game] 게임 결과 : {result}");
 #endif
+        m_currentResult.Result = result;
+
+        UIGameSingleResultPanel panel = UIManager.Instance.GameSingleResultPanel;
+        
+        // --------------------------------------------------------------------------
+
+        bool isDone = false;
+        
+        panel.Open(m_currentResult, new Progress<bool>(_ => isDone = true));
+        
+        await UniTask.WaitUntil(() => isDone);
+        
+        // --------------------------------------------------------------------------
+        
+        
     }
 }

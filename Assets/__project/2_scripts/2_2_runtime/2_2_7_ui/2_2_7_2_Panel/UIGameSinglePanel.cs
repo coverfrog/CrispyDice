@@ -5,7 +5,7 @@ using RTLTMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class UIGameSinglePanel : MonoBehaviour
+public class UIGameSinglePanel : UIPanel
 {
     [SerializeField] private RTLTextMeshPro m_txtSubject;
 
@@ -27,9 +27,9 @@ public class UIGameSinglePanel : MonoBehaviour
     
     // --------------------------------------------------------------------------
     
-    public void Open()
+    public override void Open()
     {
-        gameObject.SetActive(true);
+        base.Open();
         
         m_diceGroup.Open();
         
@@ -37,11 +37,6 @@ public class UIGameSinglePanel : MonoBehaviour
         ActiveRoll(false);
     }
 
-    public void Close()
-    {
-        gameObject.SetActive(false);
-    }
-    
     // --------------------------------------------------------------------------
 
     public void SetSubject(string str)
