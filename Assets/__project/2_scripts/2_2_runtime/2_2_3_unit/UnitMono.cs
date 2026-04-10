@@ -13,6 +13,8 @@ public abstract class UnitMono : NetworkBehaviour
     private static readonly int k_animAttack = Animator.StringToHash("2_Attack");
     private static readonly int k_animDamaged = Animator.StringToHash("3_Damaged");
     private static readonly int k_animTargetDuration = Animator.StringToHash("TargetDuration");
+    private static readonly int k_animDeath = Animator.StringToHash("4_Death");
+    private static readonly int k_animIsDeath = Animator.StringToHash("isDeath");
 
     // --------------------------------------------------------------------------
     
@@ -48,6 +50,8 @@ public abstract class UnitMono : NetworkBehaviour
         
         AddressableUtil.Unload("cons_table/status");
 
+        m_animator.SetBool(k_animIsDeath, false);
+        
         IsLive = true;
     }
     
@@ -124,12 +128,19 @@ public abstract class UnitMono : NetworkBehaviour
         
         m_animator.SetTrigger(k_animDamaged);    
     }
+
+    public void OnDead()
+    {
+        m_animator.SetTrigger(k_animDeath);
+        m_animator.SetBool(k_animIsDeath, true);
+    }
     
     // --------------------------------------------------------------------------
 
-    public void ApplyStatSp()
+    public bool ApplyStatSp()
     {
         m_status[StatType.Sp] = Mathf.Min(m_status[StatType.Sp] + Dices[0], m_status[StatType.SpMax]);
+        return Mathf.Approximately(m_status[StatType.Sp], m_status[StatType.SpMax]);
     }
     
     public void ApplyStatHp()
@@ -140,6 +151,13 @@ public abstract class UnitMono : NetworkBehaviour
     public void ApplyStatStr()
     {
         m_status[StatType.Str] = Dices[1];
+    }
+    
+    // --------------------------------------------------------------------------
+
+    public void SetStatSp(float sp)
+    {
+        m_status[StatType.Sp] = Mathf.Clamp(sp, 0, m_status[StatType.SpMax]);
     }
     
     // --------------------------------------------------------------------------

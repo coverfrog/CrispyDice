@@ -17,10 +17,10 @@ MonoBehaviour:
     - Key: 1
       Value:
         m_id: 1
-        m_hpMax: 20
-        m_spMax: 20
+        m_hpMax: 6
+        m_spMax: 6
     - Key: 2
       Value:
         m_id: 2
-        m_hpMax: 10
-        m_spMax: 20
+        m_hpMax: 6
+        m_spMax: 6

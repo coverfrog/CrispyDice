@@ -13,7 +13,7 @@
         DiceGroup.Scale(index, duration, maxScale);
     }
 
-    public void Attack(UnitMono target, float duration)
+    public void AttackNormal(UnitMono target, float duration)
     {
         Unit.AttackNormal(target, duration);
     }

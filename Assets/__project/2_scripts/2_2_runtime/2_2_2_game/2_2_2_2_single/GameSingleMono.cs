@@ -249,24 +249,44 @@ public class GameSingleMono : MonoBehaviour
 
         if (m_players[true].IsSp())
         {
-            m_players[true].Unit.ApplyStatSp();
+            bool isMax = m_players[true].Unit.ApplyStatSp();
+         
             m_players[true].ScaleDice(0, k_turnDuration, k_scaleDiceMe);
             
             UIManager.Instance.GameSinglePanel.UpdateUnitView(k_turnDuration, false, true);
 
             await UniTask.WaitForSeconds(k_turnDuration);
-            await UniTask.WaitForEndOfFrame();
+
+            if (isMax)
+            {
+                m_players[true].AttackNormal(m_players[false].Unit, k_turnDuration);
+                m_players[true].Unit.SetStatSp(0);
+                
+                UIManager.Instance.GameSinglePanel.UpdateUnitView(k_turnDuration, false, true);
+                
+                await UniTask.WaitForSeconds(k_turnDuration);
+            }
         }
 
         if (m_players[false].IsSp())
         {
-            m_players[false].Unit.ApplyStatSp();
+            bool isMax = m_players[false].Unit.ApplyStatSp();
+            
             m_players[false].ScaleDice(0, k_turnDuration, k_scaleDiceEnemy);
             
             UIManager.Instance.GameSinglePanel.UpdateUnitView(k_turnDuration, false, false);
 
             await UniTask.WaitForSeconds(k_turnDuration);
-            await UniTask.WaitForEndOfFrame();
+            
+            if (isMax)
+            {
+                m_players[false].AttackNormal(m_players[true].Unit, k_turnDuration);
+                m_players[false].Unit.SetStatSp(0);
+                
+                UIManager.Instance.GameSinglePanel.UpdateUnitView(k_turnDuration, false, false);
+                
+                await UniTask.WaitForSeconds(k_turnDuration);
+            }
         }
         
         await UniTask.WaitForSeconds(k_turnDuration);
@@ -276,7 +296,7 @@ public class GameSingleMono : MonoBehaviour
         if (m_players[true].IsAttack())
         {
             m_players[true].Unit.ApplyStatStr();
-            m_players[true].Attack(m_players[false].Unit, k_turnDuration);
+            m_players[true].AttackNormal(m_players[false].Unit, k_turnDuration);
             m_players[true].ScaleDice(1, k_turnDuration, k_scaleDiceMe);
         
             await UniTask.WaitForSeconds(k_turnDuration);
@@ -286,7 +306,7 @@ public class GameSingleMono : MonoBehaviour
         if (m_players[false].IsAttack())
         {
             m_players[false].Unit.ApplyStatStr();
-            m_players[false].Attack(m_players[true].Unit, k_turnDuration);
+            m_players[false].AttackNormal(m_players[true].Unit, k_turnDuration);
             m_players[false].ScaleDice(1, k_turnDuration, k_scaleDiceEnemy);
         
             await UniTask.WaitForSeconds(k_turnDuration);
@@ -299,21 +319,32 @@ public class GameSingleMono : MonoBehaviour
         
         // [Death]--------------------------------------------------------------------------
         
+        
         if (!m_players[true].Unit.IsLive && !m_players[false].Unit.IsLive)
         {
+            m_players[true].Unit.OnDead();
+            m_players[false].Unit.OnDead();
+            
             GameEnd(GameResult.Draw).Forget();
+            
             return;
         }
         
         if (!m_players[false].Unit.IsLive)
         {
+            m_players[false].Unit.OnDead();
+            
             GameEnd(GameResult.Win).Forget();
+            
             return;
         }
         
         if (!m_players[true].Unit.IsLive)
         {
+            m_players[true].Unit.OnDead();
+            
             GameEnd(GameResult.Lose).Forget();
+            
             return;
         }
         
