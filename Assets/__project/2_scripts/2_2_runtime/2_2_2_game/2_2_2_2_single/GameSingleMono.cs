@@ -241,7 +241,7 @@ public class GameSingleMono : MonoBehaviour
 
     private async UniTaskVoid Battle()
     {
-        const float k_turnDuration = 0.4f;
+        const float k_turnDuration = 0.2f;
         const float k_scaleDiceMe = 1.4f;
         const float k_scaleDiceEnemy = 2.0f;
         
@@ -267,6 +267,12 @@ public class GameSingleMono : MonoBehaviour
                 await UniTask.WaitForSeconds(k_turnDuration);
             }
         }
+        else
+        {
+            m_players[true].ScaleDice(0, k_turnDuration, k_scaleDiceMe);
+            await UniTask.WaitForSeconds(k_turnDuration);
+            
+        }
 
         if (m_players[false].IsSp())
         {
@@ -288,6 +294,11 @@ public class GameSingleMono : MonoBehaviour
                 await UniTask.WaitForSeconds(k_turnDuration);
             }
         }
+        else
+        {
+            m_players[false].ScaleDice(0, k_turnDuration, k_scaleDiceMe);
+            await UniTask.WaitForSeconds(k_turnDuration);
+        }
         
         await UniTask.WaitForSeconds(k_turnDuration);
 
@@ -302,6 +313,11 @@ public class GameSingleMono : MonoBehaviour
             await UniTask.WaitForSeconds(k_turnDuration);
             await UniTask.WaitForSeconds(k_turnDuration);
         }
+        else
+        {
+            m_players[true].ScaleDice(1, k_turnDuration, k_scaleDiceMe);
+            await UniTask.WaitForSeconds(k_turnDuration);
+        }
 
         if (m_players[false].IsAttack())
         {
@@ -311,6 +327,11 @@ public class GameSingleMono : MonoBehaviour
         
             await UniTask.WaitForSeconds(k_turnDuration);
             await UniTask.WaitForEndOfFrame();
+        }
+        else
+        {
+            m_players[false].ScaleDice(1, k_turnDuration, k_scaleDiceMe);
+            await UniTask.WaitForSeconds(k_turnDuration);
         }
         
         UIManager.Instance.GameSinglePanel.UpdateUnitView(k_turnDuration, false);
@@ -360,6 +381,11 @@ public class GameSingleMono : MonoBehaviour
             await UniTask.WaitForSeconds(k_turnDuration);
             await UniTask.WaitForEndOfFrame();
         }
+        else
+        {
+            m_players[true].ScaleDice(2, k_turnDuration, k_scaleDiceMe);
+            await UniTask.WaitForSeconds(k_turnDuration);
+        }
         
         if (m_players[false].IsHeal())
         {
@@ -370,6 +396,11 @@ public class GameSingleMono : MonoBehaviour
 
             await UniTask.WaitForSeconds(k_turnDuration);
             await UniTask.WaitForEndOfFrame();
+        }
+        else
+        {
+            m_players[false].ScaleDice(2, k_turnDuration, k_scaleDiceMe);
+            await UniTask.WaitForSeconds(k_turnDuration);
         }
         
         // [Betting]--------------------------------------------------------------------------
