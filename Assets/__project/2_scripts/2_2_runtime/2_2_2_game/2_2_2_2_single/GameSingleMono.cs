@@ -24,7 +24,7 @@ public class GameSingleMono : MonoBehaviour
     private async UniTaskVoid Setup()
     {
         // 스테이지 로딩은 원래 따로 들어가야 하지만 초기 로딩에는 포함 되서 같이 넣어둠
-        
+
         IGameInstaller installer = new GameSingleInstallerSingle();
         IStageLoader loader = new GameSingleStageLoader();
 
@@ -36,6 +36,8 @@ public class GameSingleMono : MonoBehaviour
         // --------------------------------------------------------------------------
 
         const float k_uiDuration = 0.3f;
+        
+        await UniTask.WaitUntil(() => UIManager.Instance != null);
         
         UILoadingPanel loadingPanel = UIManager.Instance.LoadingPanel;
         loadingPanel.Open();
@@ -257,9 +259,12 @@ public class GameSingleMono : MonoBehaviour
 
     private async UniTaskVoid Battle()
     {
+        
         const float k_turnDuration = 0.2f;
         const float k_scaleDiceMe = 1.4f;
         const float k_scaleDiceEnemy = 2.0f;
+        
+        UIManager.Instance.GameSinglePanel.SetSubject("BATTLE");
         
         // [Sp]--------------------------------------------------------------------------
 

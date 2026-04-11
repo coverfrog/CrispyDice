@@ -37,15 +37,7 @@ public class GameSingleInstallerSingle : IGameInstaller
         // [Task 1]--------------------------------------------------------------------------
         
 #if true
-        for (float x = 0.0f; x < 1.0f; x += Time.deltaTime)
-        {
-            if (cancelToken.IsCancellationRequested)
-            {
-                return;
-            }
-
-            await UniTask.Yield(cancelToken);
-        }
+        await UniTask.WaitUntil(() => SessionManager.Instance != null, cancellationToken: cancelToken);
 
         SessionManager.Instance.Session_Host(null, null);
 #endif

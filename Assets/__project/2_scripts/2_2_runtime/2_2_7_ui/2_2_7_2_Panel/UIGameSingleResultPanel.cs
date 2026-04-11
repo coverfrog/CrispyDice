@@ -2,6 +2,7 @@ using System;
 using DG.Tweening;
 using RTLTMPro;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class UIGameSingleResultPanel : UIPanel
@@ -95,6 +96,6 @@ public class UIGameSingleResultPanel : UIPanel
 
     public void OnClick_Submit()
     {
-        
+        SceneManager.LoadScene("__project/1_scenes/Lobby");
     }
 }

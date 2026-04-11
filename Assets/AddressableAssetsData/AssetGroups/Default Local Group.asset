@@ -15,6 +15,11 @@ MonoBehaviour:
   m_GroupName: Default Local Group
   m_GUID: a06852db315e4664a90b11086569b13e
   m_SerializeEntries:
+  - m_GUID: 1281815320272a749b98dfa77290e273
+    m_Address: manager/data
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 349f2180c6de7c14ea9b271873641127
     m_Address: model/2
     m_ReadOnly: 0
@@ -27,6 +32,11 @@ MonoBehaviour:
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 3f9ab92ba90545f46b61cbe60287c7fb
     m_Address: cons_table/stage
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 4148cd2617996da4a8a642b18035e998
+    m_Address: manager/session
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
@@ -57,6 +67,11 @@ MonoBehaviour:
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: d0e6e16c413e8634db4809cf70602799
     m_Address: option/stat_colors
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: e421e4be323fa604298953ae1d47592e
+    m_Address: manager/ui
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0

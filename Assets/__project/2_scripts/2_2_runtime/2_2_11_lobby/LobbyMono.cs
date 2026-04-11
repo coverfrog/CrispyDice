@@ -1,0 +1,37 @@
+using System;
+using System.Collections;
+using Cysharp.Threading.Tasks;
+using UnityEngine;
+using UnityEngine.SceneManagement;
+
+public class LobbyMono : MonoBehaviour
+{
+    private bool m_isActive;
+
+    private IEnumerator Start()
+    {
+        yield return new WaitUntil(() => SessionManager.Instance != null);
+        yield return new WaitUntil(() => UIManager.Instance != null);
+        
+        m_isActive = true;
+    }
+
+    public void OnClick_Play()
+    {
+        if (!m_isActive)
+        {
+            return;
+        }
+        
+        SceneManager.LoadScene("__project/1_scenes/GameSingle");
+        UIManager.Instance.LoadingPanel.Open();
+    }
+
+    public void OnClick_HowTo()
+    {
+        if (!m_isActive)
+        {
+            return;
+        }
+    }
+}
