@@ -48,10 +48,10 @@ public class UIGameSingleResultPanel : UIPanel
         float s = clearTime.Seconds + (clearTime.Milliseconds / 1000.0f);
 
         string str = "";
-        if (h > 0) str += $"{h} H ";
-        if (m > 0) str += $"{m} M ";
+        if (h > 0) str += $"{h} h ";
+        if (m > 0) str += $"{m} m ";
         
-        str += $"{s:f2} S";
+        str += $"{s:f2} s";
         
         if (m_txtTime != null) m_txtTime.text = $"Time : {str}";
         
