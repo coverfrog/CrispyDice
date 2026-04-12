@@ -10,10 +10,14 @@ public class LobbyMono : MonoBehaviour
 
     private IEnumerator Start()
     {
+        m_isActive = false;
+        
         yield return new WaitUntil(() => SessionManager.Instance != null);
         yield return new WaitUntil(() => UIManager.Instance != null);
         
         m_isActive = true;
+        
+        UIManager.Instance.GameSingleResultPanel.Close();
     }
 
     public void OnClick_Play()

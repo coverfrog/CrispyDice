@@ -1,11 +1,22 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using FrogLibrary;
 using Mirror;
 using UnityEngine;
 
 public class DiceMonoGroup : MonoBehaviour
 {
-    [SerializeField] private List<DiceMono> m_dices = new();
+    [SerializeField] private string m_adrPath;
     
+    [Header("")]
+    [SerializeField] private Camera m_camera;
+    [SerializeField] private List<DiceMono> m_dices = new();
+
+    private void Start()
+    {
+        m_camera.targetTexture = AddressableUtil.Load<RenderTexture>(m_adrPath);
+    }
+
     public void Roll(DiceFaces faces, SyncList<int> dices, float duration)
     {
         for (int i = 0; i < dices.Count; i++)

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Cysharp.Threading.Tasks;
 using FrogLibrary;
+using Mirror;
 using UnityEngine;
 
 public class GameSingleMono : MonoBehaviour
@@ -21,9 +22,41 @@ public class GameSingleMono : MonoBehaviour
         Setup().Forget();
     }
 
+    private void OnDestroy()
+    {
+        if (m_players != null)
+        {
+            foreach (GameSinglePlayer player in m_players.Values)
+            {
+                UnitMonoSingle unit = player.Unit;
+
+                if (unit != null)
+                {
+                    if (unit.netId != 0)
+                    {
+                        NetworkServer.UnSpawn(unit.gameObject);
+                    }
+                    
+                    Destroy(unit.gameObject);
+                }
+            }
+        }
+    }
+
     private async UniTaskVoid Setup()
     {
-        // 스테이지 로딩은 원래 따로 들어가야 하지만 초기 로딩에는 포함 되서 같이 넣어둠
+        await UniTask.WaitUntil(() => SessionManager.Instance != null);
+        await UniTask.WaitUntil(() => UIManager.Instance != null);
+        
+        // --------------------------------------------------------------------------
+                
+#if true
+        await UniTask.WaitUntil(() => SessionManager.Instance != null);
+
+        SessionManager.Instance.Session_Host(null, null);
+#endif
+        
+        // --------------------------------------------------------------------------
 
         IGameInstaller installer = new GameSingleInstallerSingle();
         IStageLoader loader = new GameSingleStageLoader();

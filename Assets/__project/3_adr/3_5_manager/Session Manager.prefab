@@ -137,4 +137,4 @@ MonoBehaviour:
   evaluationMethod: 0
   evaluationInterval: 3
   timeInterpolationGui: 0
-  m_sessionMode: 0
+  m_sessionMode: 1

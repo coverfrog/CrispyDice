@@ -35,12 +35,6 @@ public class GameSingleInstallerSingle : IGameInstaller
         Log("설치 시작");
         
         // [Task 1]--------------------------------------------------------------------------
-        
-#if true
-        await UniTask.WaitUntil(() => SessionManager.Instance != null, cancellationToken: cancelToken);
-
-        SessionManager.Instance.Session_Host(null, null);
-#endif
 
         bool isConn = !await UniTask
             .WaitUntil(() => NetworkClient.active, cancellationToken: cancelToken)

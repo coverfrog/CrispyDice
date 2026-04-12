@@ -80,6 +80,16 @@ MonoBehaviour:
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 91b739f02a3b87a4e8e84483b28de538
+    m_Address: render_texture/dices_single_me
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 0bdd16cec73e09745adc7c4992033a74
+    m_Address: render_texture/dices_single_enemy
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
   m_ReadOnly: 0
   m_Settings: {fileID: 11400000, guid: 37cc992161b5f054bbcc99e6e83f0c69, type: 2}
   m_SchemaSet:

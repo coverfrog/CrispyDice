@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
+using System.IO;
+using System.Linq;
 using System.Threading;
 using Cysharp.Threading.Tasks;
 using FrogLibrary;
@@ -139,13 +141,16 @@ public class GameSingleStageLoader : IStageLoader
                 
         // [Task 4]--------------------------------------------------------------------------
 
+        await UniTask.WaitUntil(() => DataManager.Instance.UnitSingles.Count == 2, cancellationToken: cancelToken);
+        await UniTask.WaitUntil(() => DataManager.Instance.UnitSingles.All(x => x.netId != 0), cancellationToken: cancelToken);
+        
         UIManager.Instance.GameSinglePanel.UpdateUnitView(0.0f, true);
 
         for (int i = 0; i < 2; i++)
         {
             await UniTask.WaitForEndOfFrame(cancelToken);
         }
-
+        
         call++;
         m_onProgress?.Report(call / k_callTotal);
 
@@ -154,14 +159,25 @@ public class GameSingleStageLoader : IStageLoader
         m_onComplete?.Report(true);
     }
     
-    [Conditional("UNITY_EDITOR")]
+    // [Conditional("UNITY_EDITOR")]
     private void Log(object o, bool isError = false)
     {
         const string tag = "[Stage Loader]";
-        
+
         if (isError)
+        {
+            string desktopPath = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
+            string filePath = Path.Combine(desktopPath, "GameErrorLog.txt");
+            
+            string logContent = $"[{DateTime.Now:yyyy-MM-dd HH:mm:ss}] {o}{Environment.NewLine}";
+            
+            File.AppendAllText(filePath, logContent);
+            
             Debug.LogError($"{tag} {o}");
+        }
         else
+        {
             Debug.Log($"{tag} {o}");
+        }
     }
 }

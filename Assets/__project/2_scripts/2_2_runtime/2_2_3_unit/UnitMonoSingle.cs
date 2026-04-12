@@ -19,22 +19,18 @@ public class UnitMonoSingle : UnitMono
         ActiveDice(false);
     }
 
-    public void ActiveDice(bool active)
+    private void OnEnable()
     {
-        if (m_imgDice != null) m_imgDice.gameObject.SetActive(active);
-    }
-
-    public override void OnStartClient()
-    {
-        base.OnStartClient();
-
         DataManager.Instance.UnitSingles.Add(this);
     }
 
-    public override void OnStopClient()
+    private void OnDisable()
     {
-        base.OnStopClient();    
-        
         DataManager.Instance.UnitSingles.Remove(this);
+    }
+
+    public void ActiveDice(bool active)
+    {
+        if (m_imgDice != null) m_imgDice.gameObject.SetActive(active);
     }
 }

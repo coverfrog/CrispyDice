@@ -96,6 +96,6 @@ public class UIGameSingleResultPanel : UIPanel
 
     public void OnClick_Submit()
     {
-        SceneManager.LoadScene("__project/1_scenes/Lobby");
+        SessionManager.Instance.Session_Exit(null, null);
     }
 }
