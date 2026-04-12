@@ -21,7 +21,7 @@ public class LobbyMono : MonoBehaviour
         UIManager.Instance.GameSingleResultPanel.Close();
     }
 
-    public void OnClick_Play()
+    public void OnClick_Single()
     {
         if (!m_isActive)
         {
@@ -29,6 +29,17 @@ public class LobbyMono : MonoBehaviour
         }
         
         SceneManager.LoadScene("__project/1_scenes/GameSingle");
+        UIManager.Instance.LoadingPanel.Open();
+    }
+
+    public void OnClick_Multi()
+    {
+        if (!m_isActive)
+        {
+            return;
+        }
+        
+        SceneManager.LoadScene("__project/1_scenes/GameMulti");
         UIManager.Instance.LoadingPanel.Open();
     }
 
