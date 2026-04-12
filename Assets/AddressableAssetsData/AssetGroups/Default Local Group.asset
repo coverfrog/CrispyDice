@@ -15,6 +15,11 @@ MonoBehaviour:
   m_GroupName: Default Local Group
   m_GUID: a06852db315e4664a90b11086569b13e
   m_SerializeEntries:
+  - m_GUID: 0bdd16cec73e09745adc7c4992033a74
+    m_Address: render_texture/dices_single_enemy
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 1281815320272a749b98dfa77290e273
     m_Address: manager/data
     m_ReadOnly: 0
@@ -60,13 +65,28 @@ MonoBehaviour:
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 84ef5bf81e63cf245827798bc2a192dc
+    m_Address: ui_popup/option
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 8c7efc3b2e8b53f4a9e1a6d51137f9b4
     m_Address: model/1
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 91b739f02a3b87a4e8e84483b28de538
+    m_Address: render_texture/dices_single_me
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: d0e6e16c413e8634db4809cf70602799
     m_Address: option/stat_colors
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: db3498265ff5f7246a88ee80b92d54eb
+    m_Address: manager/audio
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
@@ -77,16 +97,6 @@ MonoBehaviour:
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: efd855f2029ef54458ff10184f0efd81
     m_Address: option/dice_faces
-    m_ReadOnly: 0
-    m_SerializedLabels: []
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 91b739f02a3b87a4e8e84483b28de538
-    m_Address: render_texture/dices_single_me
-    m_ReadOnly: 0
-    m_SerializedLabels: []
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 0bdd16cec73e09745adc7c4992033a74
-    m_Address: render_texture/dices_single_enemy
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0

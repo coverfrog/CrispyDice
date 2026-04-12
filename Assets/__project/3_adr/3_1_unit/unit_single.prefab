@@ -61,7 +61,7 @@ Canvas:
   m_AdditionalShaderChannelsFlag: 0
   m_UpdateRectTransformForStandalone: 0
   m_SortingLayerID: 0
-  m_SortingOrder: 0
+  m_SortingOrder: 100
   m_TargetDisplay: 0
 --- !u!114 &8969870012804126241
 MonoBehaviour:
@@ -157,6 +157,8 @@ MonoBehaviour:
   m_trScale: {fileID: 5532918228927886729}
   m_status: {fileID: -1735830256513516943}
   m_animator: {fileID: 0}
+  IsLive: 0
+  SelectDice: 0
   m_imgDice: {fileID: 2402310561583401456}
 --- !u!114 &-1735830256513516943
 MonoBehaviour:

@@ -14,6 +14,7 @@ public class LobbyMono : MonoBehaviour
         
         yield return new WaitUntil(() => SessionManager.Instance != null);
         yield return new WaitUntil(() => UIManager.Instance != null);
+        yield return new WaitUntil(() => AudioManager.Instance != null);
         
         m_isActive = true;
         
@@ -37,5 +38,15 @@ public class LobbyMono : MonoBehaviour
         {
             return;
         }
+    }
+
+    public void OnClick_Option()
+    {
+        if (!m_isActive)
+        {
+            return;
+        }
+        
+        UIManager.Instance.OptionPopup.Open();
     }
 }
