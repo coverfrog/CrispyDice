@@ -11,6 +11,7 @@ public class UIGameSingleResultPanel : UIPanel
     [SerializeField] private Button m_btnSubmit;
     [SerializeField] private RTLTextMeshPro m_txtResult;
     [SerializeField] private RTLTextMeshPro m_txtRollCount;
+    [SerializeField] private RTLTextMeshPro m_txtTime;
 
     private const float k_openDuration = 1.0f;
     
@@ -20,18 +21,40 @@ public class UIGameSingleResultPanel : UIPanel
     private Tween m_twRollFade;
 
     private IProgress<bool> m_onSubmit;
+
+    private GameSingleResult m_result;
     
     public void Open(GameSingleResult result, IProgress<bool> onSubmit)
     {
         Open();
 
+        m_result = result;
         m_onSubmit = onSubmit;
-        
+
+        if (m_btnSubmit != null) m_btnSubmit.interactable = false;
         if (m_txtResult != null) m_txtResult.text = result.Result.ToString();
         if (m_txtRollCount != null) m_txtRollCount.text = $"Roll : {result.RollCount}";
-        if (m_btnSubmit != null) m_btnSubmit.interactable = false;
 
+        ApplyClearTime();
         Dimmed();
+    }
+
+    private void ApplyClearTime()
+    {
+        TimeSpan clearTime = m_result.EndTime - m_result.BeginTime;
+        
+        int h = clearTime.Hours;
+        int m = clearTime.Minutes;
+        float s = clearTime.Seconds + (clearTime.Milliseconds / 1000.0f);
+
+        string str = "";
+        if (h > 0) str += $"{h} H ";
+        if (m > 0) str += $"{m} M ";
+        
+        str += $"{s:f2} S";
+        
+        if (m_txtTime != null) m_txtTime.text = $"Time : {str}";
+        
     }
     
     // --------------------------------------------------------------------------

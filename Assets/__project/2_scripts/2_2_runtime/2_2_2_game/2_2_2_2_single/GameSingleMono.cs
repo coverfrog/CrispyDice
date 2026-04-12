@@ -16,10 +16,17 @@ public class GameSingleMono : MonoBehaviour
     private readonly UnityDictionary<ulong, List<GameSingleResult>> m_results = new();
     
     private GameSingleResult m_currentResult;
+
+    private bool m_isQuit;
     
     private void Start()
     {
         Setup().Forget();
+    }
+
+    private void OnApplicationQuit()
+    {
+        m_isQuit = true;
     }
 
     private void OnDestroy()
@@ -32,12 +39,15 @@ public class GameSingleMono : MonoBehaviour
 
                 if (unit != null)
                 {
-                    if (unit.netId != 0)
+                    if (!m_isQuit)
                     {
-                        NetworkServer.UnSpawn(unit.gameObject);
-                    }
+                        if (unit.netId != 0)
+                        {
+                            NetworkServer.UnSpawn(unit.gameObject);
+                        }
                     
-                    Destroy(unit.gameObject);
+                        Destroy(unit.gameObject);
+                    }
                 }
             }
         }
@@ -152,6 +162,10 @@ public class GameSingleMono : MonoBehaviour
         // --------------------------------------------------------------------------
         
         loadingPanel.Close();
+        
+        // --------------------------------------------------------------------------
+        
+        m_currentResult.BeginTime = DateTime.Now;
         
         // --------------------------------------------------------------------------
         
@@ -476,6 +490,7 @@ public class GameSingleMono : MonoBehaviour
         Debug.Log($"[Game] 게임 결과 : {result}");
 #endif
         m_currentResult.Result = result;
+        m_currentResult.EndTime = DateTime.Now;
 
         UIGameSingleResultPanel panel = UIManager.Instance.GameSingleResultPanel;
         
